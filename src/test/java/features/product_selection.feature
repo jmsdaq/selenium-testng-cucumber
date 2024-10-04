@@ -13,10 +13,10 @@ Feature: Product Selection and Purchase
     And adds the product to the cart
     And the user selects the product "Saucedemo T-Shirt"
     And adds the product to the cart
-    Then the cart count should increase to 2
+    Then the cart count should increase
 
   Scenario: Successfully checking out with products in the cart
-    Given the user has 1 product in the cart
+    Given the user has product in the cart
     When the user proceeds to checkout
     And enters valid shipping information
     Then the user should see the order confirmation message

@@ -42,7 +42,6 @@ public class Hooks {
 
     @After("@cleanCart")
     public void cleanUp() {
-
         WebElement cartButton = context.getDriver().findElement(By.xpath("//*[@id='shopping_cart_container']/a/svg/path"));
         WebElement badge = context.getDriver().findElement(By.cssSelector(".shopping_cart_badge"));
         cartButton.click();
