@@ -4,6 +4,8 @@ import base.PageContext;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
+
+import pages.LoginPage;
 import pages.ProductPage;
 
 public class ProductSteps {
@@ -17,7 +19,7 @@ public class ProductSteps {
 
     @Given("the user is logged in")
     public void the_user_is_logged_in() {
-        new LoginSteps(context).login("standard_user", "secret_sauce"); // Assuming a login method exists in LoginSteps
+        new LoginPage(context).login("standard_user", "secret_sauce"); // Assuming a login method exists in LoginSteps
     }
 
     @When("the user selects the product {string}")
@@ -32,19 +34,13 @@ public class ProductSteps {
 
     @Then("the cart count should increase to {int}")
     public void the_cart_count_should_increase_to(int expectedCount) {
-        int actualCount = productPage.getCartCount();
-        assert actualCount == expectedCount : "Expected cart count: " + expectedCount + ", but was: " + actualCount;
+        int cartCount = productPage.getCartCount();
+        assert cartCount == expectedCount : "Expected cart count to be " + expectedCount + " but was " + cartCount;
     }
 
-    @When("the user proceeds to checkout")
-    public void the_user_proceeds_to_checkout() {
-        productPage.proceedToCheckout();
+    @Then("the cart count should increase")
+    public void the_cart_count_should_increase() {
+        int cartCount = productPage.getCartCount();
+        assert cartCount > 1 : "Expected cart count to be more than 1, but was " + cartCount;
     }
-
-    @Then("the user should see the order confirmation message")
-    public void the_user_should_see_the_order_confirmation_message() {
-        String confirmationMessage = productPage.getOrderConfirmationMessage();
-        assert confirmationMessage.contains("Thank you for your order") : "Confirmation message not displayed.";
-    }
-
 }

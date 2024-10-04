@@ -11,16 +11,10 @@ public class ProductPage {
     private final PageContext context;
 
     @FindBy(xpath = "//button[contains(text(), 'Add to cart')]")
-    private WebElement addToCartButton;
+    WebElement addToCartButton;
 
-    @FindBy(xpath = "//span[@class='shopping_cart_badge']")
-    private WebElement cartCount;
-
-    @FindBy(xpath = "//button[text()='Checkout']")
-    private WebElement checkoutButton;
-
-    @FindBy(xpath = "//h2[text()='Thank you for your order']")
-    private WebElement orderConfirmationMessage;
+    @FindBy(xpath = "//span[@class='fa-layers-counter shopping_cart_badge']")
+    WebElement cartCount;
 
     public ProductPage(PageContext context) {
         this.context = context;
@@ -30,12 +24,12 @@ public class ProductPage {
     public ProductPage selectProduct(String productName) {
         WebElement product = context.getDriver().findElement(By.xpath("//div[contains(text(), '" + productName + "')]"));
         product.click();
-        return this; // Return current instance for chaining
+        return this;
     }
 
     public ProductPage addToCart() {
         context.getWait().until(ExpectedConditions.elementToBeClickable(addToCartButton)).click();
-        return this; // Return current instance for chaining
+        return this;
     }
 
     public int getCartCount() {
@@ -43,12 +37,4 @@ public class ProductPage {
         return Integer.parseInt(countText);
     }
 
-    public ProductPage proceedToCheckout() {
-        context.getWait().until(ExpectedConditions.elementToBeClickable(checkoutButton)).click();
-        return this; // Return current instance for chaining
-    }
-
-    public String getOrderConfirmationMessage() {
-        return context.getWait().until(ExpectedConditions.visibilityOf(orderConfirmationMessage)).getText();
-    }
 }

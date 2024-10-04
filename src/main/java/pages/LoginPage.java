@@ -31,8 +31,9 @@ public class LoginPage{
         PageFactory.initElements(context.getDriver(), this);
     }
 
-    public void navigateToLoginPage() {
+    public LoginPage navigateToLoginPage() {
         context.getDriver().get("https://www.saucedemo.com/v1/"); // Update URL as necessary
+        return this;
     }
 
     public LoginPage usernameInput(String username){
@@ -44,26 +45,23 @@ public class LoginPage{
         return this;
     }
 
-//    public void setLogin(){
-//        context.getWait().until(ExpectedConditions.visibilityOf(enterUsername)).sendKeys(username);
-//        context.getWait().until(ExpectedConditions.visibilityOf(enterPassword)).sendKeys(password);
-//        context.getWait().until(ExpectedConditions.elementToBeClickable(loginButton)).click();
-//    }
-    public void clickLoginBtn() {
+    public LoginPage clickLoginBtn() {
         context.getWait().until(ExpectedConditions.elementToBeClickable(loginButton)).click();
+        return this;
     }
 
     public String errorMessage() {
         return context.getWait().until(ExpectedConditions.visibilityOf(emptyFieldsError)).getText();
     }
 
-
-//    public String getExpectedUrl(){
-//        waitForElementVisible(loginButton);
-//        return dashboardUrl;
-//    }
-
     public String getProductPageLabel() {
         return context.getWait().until(ExpectedConditions.visibilityOf(productPageLabel)).getText();
+    }
+    // New login method
+    public void login(String username, String password) {
+        this.navigateToLoginPage()
+                .usernameInput(username)
+                .passwordInput(password)
+                .clickLoginBtn();
     }
 }
