@@ -4,15 +4,13 @@ Feature: Product Selection and Purchase
     Given the user is logged in
 
   Scenario: Adding a product to the shopping cart
-    When the user selects the product "Saucedemo Backpack"
+    When the user adds "Sauce Labs Backpack" to the cart
     And adds the product to the cart
     Then the cart count should increase to 1
 
   Scenario: Adding multiple products to the shopping cart
-    When the user selects the product "Saucedemo Bike Light"
-    And adds the product to the cart
-    And the user selects the product "Saucedemo T-Shirt"
-    And adds the product to the cart
+    When the user adds "Sauce Labs Bike Light" to the cart
+    And the user adds "Sauce Labs Bolt T-Shirt" to the cart
     Then the cart count should increase
 
   Scenario: Successfully checking out with products in the cart
