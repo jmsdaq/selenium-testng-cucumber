@@ -10,21 +10,18 @@ import pages.ProductPage;
 
 public class CartSteps {
     private CartPage cartPage;
+    private ProductPage productPage;
 
     public CartSteps(PageContext context) {
         this.cartPage = new CartPage(context);
+        this.productPage = new ProductPage(context);
     }
 
     @Given("the user has product in the cart")
     public void the_user_has_product_in_the_cart(){
+        productPage.addItemBtn();
+        cartPage.clickCart();
         Assert.assertTrue(cartPage.getCartCount() > 0, "No products in cart");
-    }
-
-    @Then("the cart count should increase")
-    public void the_cart_count_should_increase() {
-        int currentCartCount = cartPage.getCartCount();
-        System.out.println("No.of books in cart: "+ currentCartCount);
-        Assert.assertTrue(currentCartCount > 1, "Cart count is not more than 1");
     }
 
     @When("the user proceeds to checkout")
@@ -35,6 +32,7 @@ public class CartSteps {
     @When("enters valid shipping information")
     public void enters_valid_shipping_information() {
         cartPage.enterShippingInformation();
+        cartPage.setFinishCheckout();
     }
 
     @Then("the user should see the order confirmation message")

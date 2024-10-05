@@ -22,14 +22,14 @@ public class ProductSteps {
         new LoginPage(context).login("standard_user", "secret_sauce"); // Assuming a login method exists in LoginSteps
     }
 
-    @When("the user selects the product {string}")
-    public void the_user_selects_the_product(String productName) {
-        productPage.selectProduct(productName);
+    @When("the user adds {string} to the cart")
+    public void the_user_adds_product_to_cart(String productName) {
+        productPage.addToCart(productName);
     }
 
     @When("adds the product to the cart")
     public void adds_the_product_to_the_cart() {
-        productPage.addToCart();
+        productPage.addItemBtn();
     }
 
     @Then("the cart count should increase to {int}")
@@ -41,6 +41,7 @@ public class ProductSteps {
     @Then("the cart count should increase")
     public void the_cart_count_should_increase() {
         int cartCount = productPage.getCartCount();
+        System.out.println("No.of books in cart: "+ cartCount);
         assert cartCount > 1 : "Expected cart count to be more than 1, but was " + cartCount;
     }
 }

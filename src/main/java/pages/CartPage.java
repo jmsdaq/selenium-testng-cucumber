@@ -9,6 +9,9 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 public class CartPage {
     private final PageContext context;
 
+    @FindBy(xpath = "//a[contains(@class,'shopping_cart_link fa-layers')]")
+    WebElement cartBtn;
+
     @FindBy(xpath = "//span[@class='fa-layers-counter shopping_cart_badge']")
     WebElement cartCount;
 
@@ -25,7 +28,7 @@ public class CartPage {
     WebElement postalCodeField;
 
     @FindBy(xpath = "//input[@type='submit']")
-    WebElement continueButton;
+    WebElement submitButton;
 
     @FindBy(xpath = "//h2[normalize-space(text())='THANK YOU FOR YOUR ORDER']")
     WebElement orderConfirmationMessage;
@@ -42,6 +45,10 @@ public class CartPage {
         return Integer.parseInt(context.getWait().until(ExpectedConditions.visibilityOf(cartCount)).getText());
     }
 
+    public void clickCart() {
+        context.getWait().until(ExpectedConditions.elementToBeClickable(cartBtn)).click();
+    }
+
     public void proceedToCheckout() {
         context.getWait().until(ExpectedConditions.elementToBeClickable(checkoutButton)).click();
     }
@@ -50,7 +57,11 @@ public class CartPage {
         context.getWait().until(ExpectedConditions.visibilityOf(firstNameField)).sendKeys("John");
         context.getWait().until(ExpectedConditions.visibilityOf(lastNameField)).sendKeys("Doe");
         context.getWait().until(ExpectedConditions.visibilityOf(postalCodeField)).sendKeys("12345");
-        context.getWait().until(ExpectedConditions.elementToBeClickable(continueButton)).click();
+        context.getWait().until(ExpectedConditions.elementToBeClickable(submitButton)).click();
+    }
+
+    public void setFinishCheckout() {
+        context.getWait().until(ExpectedConditions.elementToBeClickable(finishCheckout)).click();
     }
 
     public String getOrderConfirmationMessage() {

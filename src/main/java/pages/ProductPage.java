@@ -10,7 +10,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 public class ProductPage {
     private final PageContext context;
 
-    @FindBy(xpath = "//button[contains(text(), 'Add to cart')]")
+    @FindBy(xpath= "//button[@class='btn_primary btn_inventory']")
     WebElement addToCartButton;
 
     @FindBy(xpath = "//span[@class='fa-layers-counter shopping_cart_badge']")
@@ -27,9 +27,14 @@ public class ProductPage {
         return this;
     }
 
-    public ProductPage addToCart() {
+    public void addItemBtn() {
         context.getWait().until(ExpectedConditions.elementToBeClickable(addToCartButton)).click();
-        return this;
+    }
+    public void addToCart(String productName) {
+        WebElement addToCartButton = context.getDriver().findElement(By.xpath(
+                "//div[text()='" + productName + "']/ancestor::div[@class='inventory_item']//button[contains(@class, 'btn_inventory')]"
+        ));
+        context.getWait().until(ExpectedConditions.elementToBeClickable(addToCartButton)).click();
     }
 
     public int getCartCount() {
