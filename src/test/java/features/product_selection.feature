@@ -1,15 +1,14 @@
 Feature: Product Selection and Purchase
 
   Background:
-    Given the user is logged in
+    Given the user is on the product page
 
-  @Smoke @cleanCart
+  @prod @cleanCart
   Scenario: Adding a product to the shopping cart
     When the user adds "Sauce Labs Backpack" to the cart
-    And adds the product to the cart
     Then the cart count should increase to 1
 
-  @cleanCart
+  @prod @cleanCart
   Scenario: Adding multiple products to the shopping cart
     When the user adds "Sauce Labs Bike Light" to the cart
     And the user adds "Sauce Labs Bolt T-Shirt" to the cart
