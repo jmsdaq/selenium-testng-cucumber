@@ -8,6 +8,8 @@ import io.cucumber.java.en.Then;
 import pages.LoginPage;
 import pages.ProductPage;
 
+import static org.testng.AssertJUnit.assertEquals;
+
 public class ProductSteps {
     private final PageContext context;
     private ProductPage productPage;
@@ -17,9 +19,12 @@ public class ProductSteps {
         this.productPage = new ProductPage(context);
     }
 
-    @Given("the user is logged in")
-    public void the_user_is_logged_in() {
-        new LoginPage(context).login("standard_user", "secret_sauce"); // Assuming a login method exists in LoginSteps
+    @Given("the user is on the product page")
+    public void the_user_is_on_the_product_page() {
+        new LoginPage(context)
+                .usernameInput("standard_user")
+                .passwordInput("secret_sauce")
+                .clickLoginBtn();
     }
 
     @When("the user adds {string} to the cart")
@@ -27,11 +32,12 @@ public class ProductSteps {
         productPage.addToCart(productName);
     }
 
-    @When("adds the product to the cart")
-    public void adds_the_product_to_the_cart() {
-        productPage.addItemBtn();
+    @Then("the user should be redirected to the products page")
+    public void the_user_should_be_redirected_to_the_products_page(){
+        String actualTitle = new LoginPage(context).getProductPageLabel(); // Update with your dashboard page title
+        String expectedTitle = "Products";
+        assertEquals(expectedTitle, actualTitle);
     }
-
     @Then("the cart count should increase to {int}")
     public void the_cart_count_should_increase_to(int expectedCount) {
         int cartCount = productPage.getCartCount();

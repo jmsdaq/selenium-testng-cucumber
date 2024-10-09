@@ -20,7 +20,7 @@ public class CartSteps {
     @Given("the user has product in the cart")
     public void the_user_has_product_in_the_cart(){
         productPage.addItemBtn();
-        cartPage.clickCart();
+        productPage.clickCartBtn();
         Assert.assertTrue(cartPage.getCartCount() > 0, "No products in cart");
     }
 
@@ -36,7 +36,8 @@ public class CartSteps {
     }
 
     @Then("the user should see the order confirmation message")
-    public void the_user_should_see_the_order_confirmation_message() {
+    public void the_user_should_see_the_order_confirmation_message() throws InterruptedException{
+        Thread.sleep(5000);
         String confirmationMessage = cartPage.getOrderConfirmationMessage();
         assert confirmationMessage.contains("Thank you for your order") : "Confirmation message not displayed.";
     }

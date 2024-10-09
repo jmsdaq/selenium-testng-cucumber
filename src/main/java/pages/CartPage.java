@@ -9,9 +9,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 public class CartPage {
     private final PageContext context;
 
-    @FindBy(xpath = "//a[contains(@class,'shopping_cart_link fa-layers')]")
-    WebElement cartBtn;
-
     @FindBy(xpath = "//span[@class='fa-layers-counter shopping_cart_badge']")
     WebElement cartCount;
 
@@ -43,10 +40,6 @@ public class CartPage {
 
     public int getCartCount() {
         return Integer.parseInt(context.getWait().until(ExpectedConditions.visibilityOf(cartCount)).getText());
-    }
-
-    public void clickCart() {
-        context.getWait().until(ExpectedConditions.elementToBeClickable(cartBtn)).click();
     }
 
     public void proceedToCheckout() {

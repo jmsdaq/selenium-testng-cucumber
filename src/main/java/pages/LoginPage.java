@@ -1,10 +1,14 @@
 package pages;
 
 import base.PageContext;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+
+import static org.testng.AssertJUnit.assertEquals;
 
 public class LoginPage{
     private final PageContext context;
@@ -21,8 +25,9 @@ public class LoginPage{
     @FindBy(xpath = "//h3[@data-test='error']")  // Correct compound class selector
     WebElement emptyFieldsError;
 
-    @FindBy(xpath = "product_label")
+    @FindBy(css = ".product_label")
     WebElement productPageLabel;
+
 
     public String dashboardUrl = "https://opensource-demo.orangehrmlive.com/web/index.php/dashboard/index";
 
@@ -45,9 +50,9 @@ public class LoginPage{
         return this;
     }
 
-    public LoginPage clickLoginBtn() {
+    public ProductPage clickLoginBtn() {
         context.getWait().until(ExpectedConditions.elementToBeClickable(loginButton)).click();
-        return this;
+        return new ProductPage(context);
     }
 
     public String errorMessage() {
@@ -57,6 +62,7 @@ public class LoginPage{
     public String getProductPageLabel() {
         return context.getWait().until(ExpectedConditions.visibilityOf(productPageLabel)).getText();
     }
+
     // New login method
     public void login(String username, String password) {
         this.navigateToLoginPage()
@@ -64,4 +70,5 @@ public class LoginPage{
                 .passwordInput(password)
                 .clickLoginBtn();
     }
+
 }

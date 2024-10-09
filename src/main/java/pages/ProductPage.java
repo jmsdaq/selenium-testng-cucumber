@@ -13,12 +13,22 @@ public class ProductPage {
     @FindBy(xpath= "//button[@class='btn_primary btn_inventory']")
     WebElement addToCartButton;
 
+    @FindBy(xpath = "//a[contains(@class,'shopping_cart_link fa-layers')]")
+    WebElement cartIcon;
+
     @FindBy(xpath = "//span[@class='fa-layers-counter shopping_cart_badge']")
     WebElement cartCount;
+
 
     public ProductPage(PageContext context) {
         this.context = context;
         PageFactory.initElements(context.getDriver(), this);
+    }
+
+
+    public WebElement clickCartBtn() {
+        context.getWait().until(ExpectedConditions.elementToBeClickable(cartIcon)).click();
+        return null;
     }
 
     public ProductPage selectProduct(String productName) {
