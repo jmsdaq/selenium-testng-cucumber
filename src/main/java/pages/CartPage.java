@@ -27,7 +27,7 @@ public class CartPage {
     @FindBy(xpath = "//input[@type='submit']")
     WebElement submitButton;
 
-    @FindBy(xpath = "//h2[normalize-space(text())='THANK YOU FOR YOUR ORDER']")
+    @FindBy(css = ".complete-header")
     WebElement orderConfirmationMessage;
 
     @FindBy(xpath = "//a[@class='btn_action cart_button']")

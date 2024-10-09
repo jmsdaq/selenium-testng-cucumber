@@ -20,12 +20,3 @@ Feature: User Login
       |                 | secret_sauce    | Epic sadface: Username is required |
       | standard_user   |                 | Epic sadface: Password is required |
       |                 |                 | Epic sadface: Username is required |
-
-#  Scenario: Unsuccessful login attempts
-#    When the user enters "Invalid username" and "Invalid password"
-#    And clicks on the login button
-#    Then an error message should be displayed
-#
-#  Scenario: Attempt login with empty fields
-#    When clicks on the login button
-#    Then an error message should be displayed for
