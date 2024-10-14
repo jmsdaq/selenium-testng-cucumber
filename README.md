@@ -32,7 +32,7 @@ This project uses Cucumber, Selenium, and TestNG, focusing on Behavior-Driven De
 The Page Object Model (POM) is implemented to create an object repository for web UI elements. Each page of the application is represented by a class, which contains methods that correspond to the actions that can be performed on that page.
 
 For example, a login page class might look like this:
-```
+```java
 public class LoginPage {
     private WebDriver driver;
 
@@ -72,7 +72,7 @@ cucumber --tags @tagName
 
 ## Headless Run
 Tests can be executed in headless mode using the Chrome or Firefox driver. To run tests in headless mode, configure the WebDriver options in your test runner setup:
-```
+```java
 ChromeOptions options = new ChromeOptions();
 options.addArguments("--headless");
 WebDriver driver = new ChromeDriver(options);
@@ -91,7 +91,7 @@ mvn allure:serve
 ```
 ## Failed Screenshot
 Screenshots can be captured on test failure for better debugging. Utilize WebDriver's `getScreenshotAs()` method in your `@AfterMethod` hook:
-```
+```java
 if (result.getStatus() == ITestResult.FAILURE) {
     File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
     FileUtils.copyFile(src, new File("path/to/screenshot.png"));
@@ -101,7 +101,7 @@ if (result.getStatus() == ITestResult.FAILURE) {
 Method chaining is a programming technique where multiple method calls are made in a single statement. This is particularly useful in POM as it can lead to more readable and concise code. In this project, methods in page classes can return `this`, allowing for easy chaining of actions.
 
 For instance, in a login page class, methods can be designed to return the current instance of the class, allowing the next method to be called directly on the same object:
-```
+```java
 public class LoginPage {
     public LoginPage enterUsername(String username) {
         usernameField.sendKeys(username);
@@ -120,7 +120,7 @@ public class LoginPage {
 }
 ```
 Using chaining in your test code makes it more fluent and easier to understand:
-```
+```java
 LoginPage loginPage = new LoginPage(driver);
 loginPage.enterUsername("user1")
           .enterPassword("pass1")
@@ -131,7 +131,7 @@ This technique enhances code readability and reduces boilerplate code, making it
 ## Running Tests in Parallel with TestNG
 TestNG supports parallel test execution, making your tests run faster. You can set this up in the testng.xml file by specifying how you want the tests to run.
 Example: `testng.xml`
-```
+```java
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <suite name="ParallelTests" parallel="methods" thread-count="5">
     <test name="Test1">
