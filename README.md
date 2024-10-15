@@ -72,11 +72,16 @@ cucumber --tags @tagName
 
 ## Headless Run
 Tests can be executed in headless mode using the Chrome or Firefox driver. To run tests in headless mode, configure the WebDriver options in your test runner setup:
+
 ```java
 ChromeOptions options = new ChromeOptions();
-options.addArguments("--headless");
-WebDriver driver = new ChromeDriver(options);
+options.addArguments("--headless"); // Runs Chrome without a UI
+options.addArguments("--disable-gpu"); // Disables GPU acceleration (optional)
+options.addArguments("--window-size=1920,1080"); // Sets window size for rendering
+options.addArguments("--no-sandbox"); // Needed for CI environments
+options.addArguments("--disable-dev-shm-usage"); // Avoids shared memory issues
 
+WebDriver driver = new ChromeDriver(options);
 ```
 
 ## Allure Report
