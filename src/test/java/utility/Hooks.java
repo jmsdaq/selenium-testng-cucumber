@@ -9,6 +9,7 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver.Options;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -20,6 +21,7 @@ import io.cucumber.java.Scenario;
 
 public class Hooks {
     private PageContext context;
+    private boolean headless = true; // Set to true for headless mode
 
     public Hooks(PageContext context) {
         this.context = context;
@@ -27,15 +29,26 @@ public class Hooks {
 
     @Before(order = 1)
     public void beforeScenario(Scenario scenario) {
-        System.out.println("Im in beforeScenario");
-        RemoteWebDriver driver = new ChromeDriver();
-        WebDriverWait wait= new WebDriverWait(driver, Duration.ofSeconds(10));
+        System.out.println("In beforeScenario");
+
+        // Configure Chrome options
+        ChromeOptions options = new ChromeOptions();
+        if (headless) {
+            options.addArguments("--headless");
+            options.addArguments("--disable-gpu"); // Disable GPU hardware acceleration
+            options.addArguments("--window-size=1920,1080"); // Set window size for headless
+//            options.addArguments("--no-sandbox"); // Required for some CI environments
+//            options.addArguments("--disable-dev-shm-usage"); // Overcome limited resource problems
+        }
+
+        // Initialize WebDriver with options
+        RemoteWebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         context.setDriver(driver);
         context.setWait(wait);
         context.getDriver().get("https://www.saucedemo.com/v1/");
-        Options manage =context.getDriver().manage();
-//        manage.timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        manage.window().maximize();
+        Options manage = context.getDriver().manage();
+//        manage.window().maximize(); // This can be omitted in headless mode
     }
 
     @After("@cleanCart")
@@ -49,28 +62,24 @@ public class Hooks {
 
         // Loop to remove all items from the cart
         boolean itemsRemoved = true;
-            while (itemsRemoved) {
-            // Find all remove buttons for items in the cart
+        while (itemsRemoved) {
             List<WebElement> removeButtons = context.getDriver().findElements(By.cssSelector(".btn_secondary.cart_button"));
 
             if (removeButtons.isEmpty()) {
                 itemsRemoved = false; // No more items to remove
             } else {
-                removeButtons.getFirst().click();  // Click the first remove button
+                removeButtons.get(0).click();  // Click the first remove button
 
-                // Optionally wait for the cart to update (e.g., an element indicating the item was removed)
-                context.getWait().until(ExpectedConditions.stalenessOf(removeButtons.getFirst())); // Wait for the first button to be stale
+                context.getWait().until(ExpectedConditions.stalenessOf(removeButtons.get(0))); // Wait for the first button to be stale
             }
-            }
-//        WebElement badge = context.getDriver().findElement(By.cssSelector(".shopping_cart_badge"));
-//        assertFalse(badge.isDisplayed(), "The shopping cart badge should not be visible after clearing the cart.");
+        }
     }
 
     @After(order = 1)
     public void afterScenario(Scenario scenario) {
         boolean failed = scenario.isFailed();
-        System.out.println("is Failed? "+failed);
-        if (scenario.isFailed()) {
+        System.out.println("Is Failed? " + failed);
+        if (failed) {
             byte[] screenshot = context.getDriver().getScreenshotAs(OutputType.BYTES);
             scenario.attach(screenshot, "image/png", "Screenshot on Failure");
         }
