@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriver.Options;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -21,6 +22,7 @@ import io.cucumber.java.Scenario;
 
 public class Hooks {
     private PageContext context;
+    private String browser = "chrome"; // Default browser
     private boolean headless = true; // Set to true for headless mode
 
     public Hooks(PageContext context) {
@@ -41,8 +43,12 @@ public class Hooks {
 //            options.addArguments("--disable-dev-shm-usage"); // Overcome limited resource problems
         }
 
-        // Initialize WebDriver with options
-        RemoteWebDriver driver = new ChromeDriver(options);
+//        // Initialize WebDriver with options
+//        RemoteWebDriver driver = new ChromeDriver(options);
+//        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        // Initialize WebDriver using BrowserDriverFactory
+        String browser = System.getProperty("browser", "chrome");
+        RemoteWebDriver driver = BrowserDriverFactory.createDriver(browser);
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         context.setDriver(driver);
         context.setWait(wait);
