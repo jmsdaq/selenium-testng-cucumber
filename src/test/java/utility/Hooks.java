@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import io.qameta.allure.Description;
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.WebDriver;
@@ -19,6 +20,7 @@ import base.PageContext;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
+import org.testng.annotations.Test;
 
 public class Hooks {
     private PageContext context;
@@ -33,6 +35,8 @@ public class Hooks {
     public void beforeScenario(Scenario scenario) {
         System.out.println("In beforeScenario");
 
+        @Test
+        @Description("Test to validate login functionality")
         // Configure Chrome options
         ChromeOptions options = new ChromeOptions();
         if (headless) {
