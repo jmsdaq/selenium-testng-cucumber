@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="Suite" parallel="tests" thread-count="3">
-    <test name="ChromeTests">
+<suite name="Suite">
+    <test thread-count="3" name="ChromeTests" parallel="classes">
         <parameter name="browser" value="chrome"/>
         <classes>
-            <class name="runner.LoginTestRunner" />
+            <class name="runner.LoginTestRunner"/>
             <class name="runner.ProductTestRunner" />
         </classes>
     </test>
