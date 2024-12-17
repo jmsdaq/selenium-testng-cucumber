@@ -71,18 +71,40 @@ cucumber --tags @tagName
 ```
 
 ## Headless Run
-Tests can be executed in headless mode using the Chrome or Firefox driver. To run tests in headless mode, configure the WebDriver options in your test runner setup:
+The headless mode is enabled by default for Chrome, Firefox, and Edge. You can control this via Maven properties.
 
-```java
-ChromeOptions options = new ChromeOptions();
-options.addArguments("--headless"); // Runs Chrome without a UI
-options.addArguments("--disable-gpu"); // Disables GPU acceleration (optional)
-options.addArguments("--window-size=1920,1080"); // Sets window size for rendering
-options.addArguments("--no-sandbox"); // Needed for CI environments
-options.addArguments("--disable-dev-shm-usage"); // Avoids shared memory issues
-
-WebDriver driver = new ChromeDriver(options);
+To run the tests in headless mode, use the following Maven command:
+```bash
+mvn clean test -Dbrowser=chrome -Dheadless=true
 ```
+- `Dbrowser=chrome`: Use Chrome as the browser (you can replace it with `firefox` or `edge`).
+- `Dheadless=true`: Enables headless mode.
+
+### Hooks.java
+```java
+// Inside Hooks.java
+ChromeOptions options = new ChromeOptions();
+if (headless) {
+        options.addArguments("--headless", "--disable-gpu", "--window-size=1920,1080");
+// Add additional configurations as needed
+}
+```
+
+### BrowserDriverFactory.java
+```java
+// Inside BrowserDriverFactory.java
+if (headless) {
+        chromeOptions.addArguments("--headless");
+    firefoxOptions.addArguments("--headless");
+    edgeOptions.addArguments("--headless");
+}
+```
+### Explanation:
+- **Hooks.java**: The headless option is added for Chrome in the `Hooks` class if the `headless` flag is true. Additional options can be added as required.
+- **BrowserDriverFactory.java**: Similar configuration is applied for Chrome, Firefox, and Edge browsers in `BrowserDriverFactory` for cross-browser headless testing.
+
+This ensures the tests run in headless mode across different browsers, providing a faster and more efficient execution in CI/CD pipelines.
+
 
 ## Allure Report
 Allure framework is integrated for generating detailed reports. To view reports, follow these steps:
@@ -95,11 +117,28 @@ mvn allure:report
 mvn allure:serve
 ```
 ## Failed Screenshot
-Screenshots can be captured on test failure for better debugging. Utilize WebDriver's `getScreenshotAs()` method in your `@AfterMethod` hook:
-```java
-if (result.getStatus() == ITestResult.FAILURE) {
-    File src = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-    FileUtils.copyFile(src, new File("path/to/screenshot.png"));
+
+Capture screenshots on test failure and attach them to Cucumber and Allure reports.
+
+### Code to Capture Screenshot on Failure
+
+```
+public void afterScenario(Scenario scenario) {
+    if (scenario.isFailed()) {
+        byte[] screenshot = takeScreenshot();
+        scenario.attach(screenshot, "image/png", "Screenshot on Failure"); // Attach to Cucumber
+        saveScreenshotToAllure(screenshot); // Attach to Allure
+    }
+    context.getDriver().quit();
+}
+
+private byte[] takeScreenshot() {
+    return context.getDriver().getScreenshotAs(OutputType.BYTES);
+}
+
+@io.qameta.allure.Attachment(value = "Screenshot on Failure", type = "image/png")
+private byte[] saveScreenshotToAllure(byte[] screenshot) {
+    return screenshot; // Attach to Allure
 }
 ```
 ## Chaining method
@@ -136,17 +175,33 @@ This technique enhances code readability and reduces boilerplate code, making it
 ## Running Tests in Parallel with TestNG
 TestNG supports parallel test execution, making your tests run faster. You can set this up in the testng.xml file by specifying how you want the tests to run.
 Example: `testng.xml`
-```java
-<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="ParallelTests" parallel="methods" thread-count="5">
-    <test name="Test1">
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="Tests" parallel="classes" thread-count="3">
+    <test name="ChromeTests">
+        <parameter name="browser" value="chrome"/>
+        <parameter name="headless" value="true"/>
         <classes>
-            <class name="com.example.tests.LoginTest"/>
+            <class name="runner.LoginTestRunner" />
+            <class name="runner.ProductTestRunner" />
         </classes>
     </test>
-    <test name="Test2">
+
+    <test name="FirefoxTests">
+        <parameter name="browser" value="firefox"/>
+        <parameter name="headless" value="true"/>
         <classes>
-            <class name="com.example.tests.ProductTest"/>
+            <class name="runner.LoginTestRunner" />
+            <class name="runner.ProductTestRunner" />
+        </classes>
+    </test>
+
+    <test name="EdgeTests">
+        <parameter name="browser" value="edge"/>
+        <parameter name="headless" value="true"/>
+        <classes>
+            <class name="runner.LoginTestRunner" />
+            <class name="runner.ProductTestRunner" />
         </classes>
     </test>
 </suite>
@@ -154,7 +209,7 @@ Example: `testng.xml`
 In this configuration:
 
 - `parallel="methods"` enables parallel execution of test methods within classes.
-- `thread-count="5"` specifies that up to 5 threads can run simultaneously.
+- `thread-count="3"` specifies that up to 3 threads can run simultaneously.
 This setup allows for multiple tests to be executed concurrently, improving overall test execution time while maintaining test isolation.
 ### Clone the Repository
 ```bash
@@ -171,7 +226,28 @@ mvn clean install
 ```
 3. Configure any required environment variables or settings in your `config.properties` file.
 
-## Report
+## Allure Report
+#### Maven Configuration for Allure
+To generate Allure reports after test execution, add the following plugin to your `pom.xml` file.
+```
+<plugins>
+    <!-- Allure Maven Plugin -->
+    <plugin>
+        <groupId>io.qameta.allure</groupId>
+        <artifactId>allure-maven</artifactId>
+        <version>2.15.2</version>
+        <executions>
+            <execution>
+                <goals>
+                    <goal>aggregate</goal>
+                </goals>
+            </execution>
+        </executions>
+    </plugin>
+</plugins>
+```
+Note: The correct goal to use for generating and aggregating Allure reports is `aggregate`, not `generate` or `serve`.
+###     Generating and Serving the Report
 After running tests, you can generate and view Allure reports to analyze results and failures. To generate the report:
 
 1. Run your tests using:
@@ -186,4 +262,8 @@ mvn allure:report
 ```bash
 mvn allure:serve
 ```
+### Example Screenshots
+![Allure Report](screenshots/Screenshot 1.png)
+
+![Allure Report](screenshots/Screenshot 2.png)
 The reports will provide insights into passed, failed, and skipped tests along with detailed information on each test case.
