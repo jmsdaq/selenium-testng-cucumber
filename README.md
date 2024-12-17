@@ -263,7 +263,7 @@ mvn allure:report
 mvn allure:serve
 ```
 ### Example Screenshots
-![Allure Report](screenshots/Screenshot 1.png)
+![Allure Report](screenshots/Screenshot1.png)
 
-![Allure Report](screenshots/Screenshot 2.png)
+![Allure Report](screenshots/Screenshot2.png)
 The reports will provide insights into passed, failed, and skipped tests along with detailed information on each test case.
