@@ -20,12 +20,14 @@ import base.PageContext;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
+import io.qameta.allure.Attachment;
+import org.testng.Reporter;
 import org.testng.annotations.Test;
 
 public class Hooks {
     private PageContext context;
-    private String browser = "chrome"; // Default browser
-    private boolean headless = true; // Set to true for headless mode
+//    private String browser = "chrome"; // Default browser
+//    private boolean headless = true; // Set to true for headless mode
 
     public Hooks(PageContext context) {
         this.context = context;
@@ -35,30 +37,36 @@ public class Hooks {
     public void beforeScenario(Scenario scenario) {
         System.out.println("In beforeScenario");
 
-        @Test
-        @Description("Test to validate login functionality")
+        //        @Test
+        //        @Description("Test to validate login functionality")
         // Configure Chrome options
-        ChromeOptions options = new ChromeOptions();
-        if (headless) {
-            options.addArguments("--headless");
-            options.addArguments("--disable-gpu"); // Disable GPU hardware acceleration
-            options.addArguments("--window-size=1920,1080"); // Set window size for headless
-//            options.addArguments("--no-sandbox"); // Required for some CI environments
-//            options.addArguments("--disable-dev-shm-usage"); // Overcome limited resource problems
-        }
+//        ChromeOptions options = new ChromeOptions();
+//        if (headless) {
+//            options.addArguments("--headless");
+//            options.addArguments("--disable-gpu"); // Disable GPU hardware acceleration
+//            options.addArguments("--window-size=1920,1080"); // Set window size for headless
+//            //            options.addArguments("--no-sandbox"); // Required for some CI environments
+//            //            options.addArguments("--disable-dev-shm-usage"); // Overcome limited resource problems
+//        }
 
-//        // Initialize WebDriver with options
-//        RemoteWebDriver driver = new ChromeDriver(options);
-//        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        // Retrieve browser and headless parameters from TestNG
+        String browser = Reporter.getCurrentTestResult().getTestContext().getCurrentXmlTest()
+                .getParameter("browser");
+        String headlessParam = Reporter.getCurrentTestResult().getTestContext().getCurrentXmlTest()
+                .getParameter("headless");
+        boolean headless = Boolean.parseBoolean(headlessParam);
+        //        // Initialize WebDriver with options
+        //        RemoteWebDriver driver = new ChromeDriver(options);
+        //        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         // Initialize WebDriver using BrowserDriverFactory
-        String browser = System.getProperty("browser", "chrome");
-        RemoteWebDriver driver = BrowserDriverFactory.createDriver(browser);
+//        String browser = System.getProperty("browser", "chrome");
+        RemoteWebDriver driver = BrowserDriverFactory.createDriver(browser, headless);
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         context.setDriver(driver);
         context.setWait(wait);
         context.getDriver().get("https://www.saucedemo.com/v1/");
         Options manage = context.getDriver().manage();
-//        manage.window().maximize(); // This can be omitted in headless mode
+        //        manage.window().maximize(); // This can be omitted in headless mode
     }
 
     @After("@cleanCart")
@@ -90,10 +98,27 @@ public class Hooks {
         boolean failed = scenario.isFailed();
         System.out.println("Is Failed? " + failed);
         if (failed) {
-            byte[] screenshot = context.getDriver().getScreenshotAs(OutputType.BYTES);
-            scenario.attach(screenshot, "image/png", "Screenshot on Failure");
+            byte[] screenshot = takeScreenshot(); // Call helper method
+            scenario.attach(screenshot, "image/png", "Screenshot on Failure"); // Attach to Cucumber report
+            saveScreenshotToAllure(screenshot); // Attach to Allure report
         }
         System.out.println("Captured screenshot for failed scenario: " + scenario.getName());
         context.getDriver().quit();
     }
+
+    /**
+     * Helper method to take a screenshot.
+     */
+    private byte[] takeScreenshot() {
+        return context.getDriver().getScreenshotAs(OutputType.BYTES);
+    }
+
+    /**
+     * Attach screenshot to Allure report.
+     */
+    @io.qameta.allure.Attachment(value = "Screenshot on Failure", type = "image/png")
+    private byte[] saveScreenshotToAllure(byte[] screenshot) {
+        return screenshot; // Attach the screenshot
+    }
+
 }
