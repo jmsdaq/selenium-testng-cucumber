@@ -105,17 +105,6 @@ if (headless) {
 
 This ensures the tests run in headless mode across different browsers, providing a faster and more efficient execution in CI/CD pipelines.
 
-
-## Allure Report
-Allure framework is integrated for generating detailed reports. To view reports, follow these steps:
-
-1. Ensure Allure dependencies are included in your `pom.xml`.
-2. Run tests with the Allure listener.
-3. Generate the report with:
-```
-mvn allure:report
-mvn allure:serve
-```
 ## Failed Screenshot
 
 Capture screenshots on test failure and attach them to Cucumber and Allure reports.
@@ -174,30 +163,13 @@ This technique enhances code readability and reduces boilerplate code, making it
 
 ## Running Tests in Parallel with TestNG
 TestNG supports parallel test execution, making your tests run faster. You can set this up in the testng.xml file by specifying how you want the tests to run.
+
 Example: `testng.xml`
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <suite name="Tests" parallel="classes" thread-count="3">
     <test name="ChromeTests">
         <parameter name="browser" value="chrome"/>
-        <parameter name="headless" value="true"/>
-        <classes>
-            <class name="runner.LoginTestRunner" />
-            <class name="runner.ProductTestRunner" />
-        </classes>
-    </test>
-
-    <test name="FirefoxTests">
-        <parameter name="browser" value="firefox"/>
-        <parameter name="headless" value="true"/>
-        <classes>
-            <class name="runner.LoginTestRunner" />
-            <class name="runner.ProductTestRunner" />
-        </classes>
-    </test>
-
-    <test name="EdgeTests">
-        <parameter name="browser" value="edge"/>
         <parameter name="headless" value="true"/>
         <classes>
             <class name="runner.LoginTestRunner" />
@@ -211,6 +183,25 @@ In this configuration:
 - `parallel="methods"` enables parallel execution of test methods within classes.
 - `thread-count="3"` specifies that up to 3 threads can run simultaneously.
 This setup allows for multiple tests to be executed concurrently, improving overall test execution time while maintaining test isolation.
+## Cross-Browser Testing
+Cross-browser testing ensures your application performs consistently across different browsers. TestNG simplifies this by allowing browser-specific configurations in the `testng.xml` file.
+
+Example for multiple browsers:
+```
+    <test name="BrowserTests">  
+        <parameter name="browser" value="chrome"/>  
+        <classes>  
+            <class name="runner.LoginTestRunner" />  
+        </classes>  
+    </test>  
+    <test name="BrowserTests">  
+        <parameter name="browser" value="firefox"/>  
+        <classes>  
+            <class name="runner.LoginTestRunner" />  
+        </classes>  
+    </test>  
+```
+Each `<test>` block specifies a browser, enabling automated testing across Chrome, Firefox, and Edge in a single run. This ensures browser compatibility while maintaining efficient test organization.
 ### Clone the Repository
 ```bash
 git clone https://github.com/username/repository.git
@@ -263,7 +254,7 @@ mvn allure:report
 mvn allure:serve
 ```
 ### Example Screenshots
-![Allure Report](screenshots/Screenshot1.png)
+![Allure Report](screenshots/ss1.png)
 
-![Allure Report](screenshots/Screenshot2.png)
-The reports will provide insights into passed, failed, and skipped tests along with detailed information on each test case.
+![Allure Report](screenshots/ss2.png)
+The reports will provide insights into passed, failed, and skipped tests along with detailed information on each test case. Screenshots of failed tests are included to provide visual context, enhancing the debugging process.
